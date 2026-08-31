@@ -1,0 +1,75 @@
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="brand">Référentiel <em>NPEC</em>
+      <small>Niveaux de prise en charge · apprentissage</small>
+    </div>
+    <div class="meta">
+      <div>Applicable au<strong id="m-date">—</strong></div>
+      <div>Certifications<strong><span class="num" id="m-cert">—</span></strong></div>
+      <div>Branches (CPNE)<strong><span class="num" id="m-cpne">—</span></strong></div>
+      <div>IDCC couverts<strong><span class="num" id="m-idcc">—</span></strong></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="app">
+  <div class="loading" id="loading">Chargement du référentiel…</div>
+
+  <div id="ui" hidden>
+    <section class="searchzone">
+      <div class="fields">
+        <div class="field">
+          <label for="q-form">Formation — intitulé, code RNCP ou certificateur</label>
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="q-form" type="search" autocomplete="off" placeholder="ex. BTS négociation, RNCP38368, boulanger…" />
+          <button class="clear" id="clear-form" type="button" hidden aria-label="Effacer">×</button>
+        </div>
+        <div class="field">
+          <label for="q-branch">Branche — n° IDCC ou nom de la CPNE</label>
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
+          <input id="q-branch" type="search" autocomplete="off" placeholder="ex. 1486, métallurgie, 3248…" />
+          <button class="clear" id="clear-branch" type="button" hidden aria-label="Effacer">×</button>
+          <div class="suggest" id="suggest" hidden></div>
+        </div>
+      </div>
+      <div id="pill-slot"></div>
+      <div class="filter-row">
+        <span class="chip-group-label">Diplôme</span>
+        <select class="chip" id="f-type"><option value="">Tous les types</option></select>
+        <span class="chip-group-label">Tri</span>
+        <select class="chip" id="f-sort">
+          <option value="rel">Pertinence</option>
+          <option value="desc">NPEC décroissant</option>
+          <option value="asc">NPEC croissant</option>
+          <option value="alpha">Ordre alphabétique</option>
+        </select>
+        <button class="chip" id="btn-csv" type="button">↓ Exporter les résultats (CSV)</button>
+      </div>
+    </section>
+
+    <div class="resultbar">
+      <div class="count-result" id="countline">—</div>
+      <button class="reset" id="reset" type="button" hidden>Réinitialiser</button>
+    </div>
+
+    <div class="grid" id="results"></div>
+    <button class="chip more" id="more" type="button" hidden>Afficher plus de résultats</button>
+
+    <footer class="foot">
+      <p id="src-line"></p>
+      <p>Le NPEC est déterminé par le couple <b>certification × branche professionnelle (CPNE)</b>. La correspondance IDCC → CPNE est fournie à titre indicatif par France compétences (onglet 4 du référentiel) et n'a pas de valeur réglementaire. Statut <span class="badge cpne">CPNE</span> : valeur décidée par la CPNE, conforme aux recommandations de France compétences. Statut <span class="badge decret">Décret</span> : valeur fixée par le ministère du Travail par voie réglementaire.</p>
+      <p>Les montants s'appliquent aux contrats d'apprentissage signés à compter de la date d'applicabilité indiquée. Application de consultation non officielle : en cas d'écart, seul le référentiel publié par France compétences fait foi.</p>
+    </footer>
+  </div>
+</main>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title">
+    <div class="panel-head">
+      <button class="close" id="p-close" type="button" aria-label="Fermer">×</button>
+      <h2 id="p-title"></h2>
+      <div class="sub" id="p-sub"></div>
+    </div>
+    <div class="panel-body" id="p-body"></div>
+  </div>
+</div>

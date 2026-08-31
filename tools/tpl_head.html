@@ -1,0 +1,158 @@
+<title>Référentiel NPEC 2026</title>
+<meta name="description" content="Moteur de recherche du référentiel unique des NPEC applicable au 1er septembre 2026 : par intitulé de formation, code RNCP, IDCC ou branche." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f4ee; --bg-deep:#efeae0; --surface:#fffdf8;
+    --ink:#16140f; --ink-soft:#4a463d; --ink-mute:#8a8576;
+    --line:#e3ddce; --line-soft:#ece7d9;
+    --accent:#b8421d; --accent-soft:#f3d7c8;
+    --good:#3f6b3a; --good-soft:#dde9d8;
+    --warn:#a06a18; --warn-soft:#f4e3c4;
+    --cold:#2d5f7a; --cold-soft:#d8e6ee;
+    --shadow:0 1px 0 rgba(22,20,15,.04), 0 8px 24px -12px rgba(22,20,15,.12);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html,body{margin:0;padding:0}
+  body{font-family:"Geist",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent)}
+  .wrap{max-width:1320px;margin:0 auto;padding:0 28px}
+  @media(max-width:640px){.wrap{padding:0 16px}}
+
+  header.top{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:saturate(140%) blur(8px)}
+  .top-inner{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap;padding:16px 0 12px}
+  .brand{font-family:"Fraunces",serif;font-weight:600;font-size:28px;line-height:1;letter-spacing:-.02em}
+  .brand em{font-style:italic;font-weight:400;color:var(--accent)}
+  .brand small{display:block;font-family:"Geist Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);font-weight:400;margin-top:7px}
+  .meta{display:flex;gap:22px;flex-wrap:wrap;margin-left:auto;font-family:"Geist Mono",monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-mute)}
+  .meta strong{color:var(--ink);font-weight:500;font-size:13px;letter-spacing:.02em;display:block;margin-top:2px;text-transform:none}
+  .meta strong .num{font-family:"Fraunces",serif;font-weight:600;font-size:20px;margin-right:3px}
+
+  .searchzone{padding:20px 0 4px;display:grid;gap:12px}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:840px){.fields{grid-template-columns:1fr}}
+  .field{position:relative}
+  .field label{display:block;font-family:"Geist Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 6px 4px}
+  .field input{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:13px 40px 13px 44px;font:inherit;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s}
+  .field input:focus{border-color:var(--ink);box-shadow:0 0 0 4px color-mix(in srgb,var(--ink) 8%,transparent)}
+  .field .ico{position:absolute;left:16px;bottom:14px;width:18px;height:18px;color:var(--ink-mute);pointer-events:none}
+  input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none;appearance:none}
+  .field .clear{position:absolute;right:14px;bottom:12px;border:none;background:none;color:var(--ink-mute);cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;border-radius:50%}
+  .field .clear:hover{color:var(--ink);background:var(--bg-deep)}
+  .hint{font-size:12px;color:var(--ink-mute);margin:6px 0 0 16px}
+
+  .suggest{position:absolute;left:0;right:0;top:100%;margin-top:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);z-index:60;max-height:340px;overflow:auto;padding:6px}
+  .suggest button{display:block;width:100%;text-align:left;border:none;background:none;font:inherit;padding:9px 12px;border-radius:9px;cursor:pointer;color:var(--ink)}
+  .suggest button:hover,.suggest button.hl{background:var(--bg-deep)}
+  .suggest .sn{font-weight:500;font-size:14px}
+  .suggest .si{font-family:"Geist Mono",monospace;font-size:11px;color:var(--ink-mute);margin-top:2px}
+  .suggest .empty{padding:14px 12px;color:var(--ink-mute);font-size:13.5px}
+
+  .filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding-bottom:4px}
+  .chip{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:999px;padding:9px 14px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .chip:hover{border-color:var(--ink-mute);color:var(--ink)}
+  .chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  select.chip{padding-right:32px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%238a8576' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 12px center;background-size:11px 7px}
+  .chip-group-label{font-family:"Geist Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);margin-right:2px}
+
+  .branchpill{display:flex;align-items:center;gap:12px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:14px;padding:12px 14px;flex-wrap:wrap}
+  .branchpill .bp-lab{font-family:"Geist Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .branchpill .bp-name{font-weight:600;font-size:15px;color:#7a2a10}
+  .branchpill .bp-idcc{font-family:"Geist Mono",monospace;font-size:11.5px;color:#8b452a}
+  .branchpill button{margin-left:auto;border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);background:transparent;color:var(--accent);border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer}
+  .branchpill button:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+
+  .resultbar{display:flex;align-items:baseline;gap:16px;padding:14px 0 16px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+  .count-result{font-family:"Fraunces",serif;font-size:18px;font-weight:600}
+  .count-result em{font-style:italic;font-weight:400;color:var(--ink-mute)}
+  .reset{background:none;border:none;cursor:pointer;color:var(--accent);font:inherit;font-size:13px;text-decoration:underline;text-underline-offset:3px;padding:0}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;padding:22px 0 30px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px 14px;display:flex;flex-direction:column;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s}
+  .card:hover{border-color:var(--ink-mute);transform:translateY(-1px);box-shadow:var(--shadow)}
+  .card-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+  .card .name{font-family:"Fraunces",serif;font-size:17px;font-weight:600;line-height:1.22;letter-spacing:-.01em;flex:1}
+  .badge{font-family:"Geist Mono",monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:6px;white-space:nowrap;background:var(--bg-deep);color:var(--ink-mute)}
+  .badge.cpne{background:var(--good-soft);color:var(--good)}
+  .badge.decret{background:var(--warn-soft);color:var(--warn)}
+  .rncp{font-family:"Geist Mono",monospace;font-size:11.5px;color:var(--ink-mute);margin-bottom:6px;word-break:break-word}
+  .rncp mark,.name mark{background:var(--warn-soft);color:inherit;border-radius:3px;padding:0 1px}
+  .certif{font-size:12.5px;color:var(--ink-mute);line-height:1.4;border-left:2px solid var(--line);padding:1px 0 1px 9px;margin-bottom:12px}
+  .amount-row{margin-top:auto;display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;border-top:1px solid var(--line-soft);padding-top:12px}
+  .amount{font-family:"Fraunces",serif;font-size:26px;font-weight:600;line-height:1;letter-spacing:-.02em}
+  .amount.na{font-size:18px;color:var(--ink-mute)}
+  .amount-lab{font-family:"Geist Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:5px}
+  .range{display:flex;gap:18px;flex-wrap:wrap}
+  .range .v{font-family:"Fraunces",serif;font-size:19px;font-weight:600;line-height:1.1}
+  .more{display:block;margin:0 auto 60px;padding:12px 26px}
+
+  .empty-state{padding:60px 0 90px;text-align:center;color:var(--ink-mute)}
+  .empty-state h2{font-family:"Fraunces",serif;font-size:22px;color:var(--ink);font-weight:600;margin:0 0 8px}
+
+  /* Detail overlay */
+  .overlay{position:fixed;inset:0;background:rgba(22,20,15,.45);backdrop-filter:blur(3px);z-index:100;display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:34px 20px}
+  .overlay[hidden]{display:none}
+  .panel{background:var(--bg);border:1px solid var(--line);border-radius:18px;max-width:1060px;width:100%;box-shadow:0 30px 80px -30px rgba(22,20,15,.5);overflow:hidden}
+  .panel-head{padding:22px 26px 18px;border-bottom:1px solid var(--line);background:var(--surface);position:relative}
+  .panel-head h2{font-family:"Fraunces",serif;font-size:23px;font-weight:600;letter-spacing:-.015em;margin:0 44px 8px 0;line-height:1.25}
+  .panel-head .sub{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .close{position:absolute;right:18px;top:18px;border:1px solid var(--line);background:var(--bg);border-radius:50%;width:34px;height:34px;font-size:19px;line-height:1;cursor:pointer;color:var(--ink-soft)}
+  .close:hover{background:var(--bg-deep);color:var(--ink)}
+  .panel-body{padding:22px 26px 30px;display:grid;gap:22px}
+  @media(max-width:640px){.panel-body,.panel-head{padding-left:16px;padding-right:16px}.overlay{padding:0}.panel{border-radius:0;min-height:100%}}
+
+  .hero{display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .hero .big{font-family:"Fraunces",serif;font-size:44px;font-weight:600;line-height:1;letter-spacing:-.02em;color:var(--accent)}
+  .hero .who{font-size:14px;color:var(--ink-soft)}
+  .hero .who b{color:var(--ink)}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .stat{background:var(--surface);padding:13px 15px}
+  .stat .k{font-family:"Geist Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute)}
+  .stat .v{font-family:"Fraunces",serif;font-size:20px;font-weight:600;margin-top:3px;letter-spacing:-.01em}
+
+  h3.sec{font-family:"Geist Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 10px;font-weight:500}
+  h3.sec .tag{background:var(--bg-deep);color:var(--ink-soft);border-radius:5px;padding:2px 6px;margin-left:6px;letter-spacing:.06em}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:840px){.two{grid-template-columns:1fr}}
+  .tier{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .tier-head{padding:12px 16px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:9px}
+  .tier-head .dot{width:9px;height:9px;border-radius:50%}
+  .tier.high .dot{background:var(--good)} .tier.low .dot{background:var(--cold)}
+  .tier-head .t{font-family:"Fraunces",serif;font-size:16px;font-weight:600}
+  .tier-head .n{margin-left:auto;font-family:"Geist Mono",monospace;font-size:10.5px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em}
+  .trow{display:flex;gap:14px;padding:11px 16px;border-top:1px solid var(--line-soft);align-items:flex-start}
+  .trow:first-of-type{border-top:none}
+  .trow .rank{font-family:"Geist Mono",monospace;font-size:10.5px;color:var(--ink-mute);width:16px;padding-top:4px;flex:none}
+  .trow .amt{font-family:"Fraunces",serif;font-size:19px;font-weight:600;width:96px;flex:none;letter-spacing:-.01em}
+  .tier.high .amt{color:var(--good)} .tier.low .amt{color:var(--cold)}
+  .trow .who{flex:1;min-width:0}
+  .trow .cpne-n{font-size:13.5px;line-height:1.35;color:var(--ink)}
+  .trow .idccs{margin-top:5px;display:flex;gap:4px;flex-wrap:wrap}
+  .idcc-chip{font-family:"Geist Mono",monospace;font-size:10.5px;background:var(--bg-deep);color:var(--ink-soft);border-radius:5px;padding:2px 6px}
+  .idcc-chip.hit{background:var(--accent-soft);color:#8b3016}
+  .trow .plus{font-size:12px;color:var(--ink-mute);margin-top:4px}
+
+  .tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .tabletools{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;align-items:center}
+  .tabletools input{flex:1;min-width:180px;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font:inherit;font-size:13.5px;background:var(--bg);outline:none}
+  .tabletools input:focus{border-color:var(--ink-mute)}
+  .tscroll{max-height:430px;overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{position:sticky;top:0;background:var(--bg-deep);text-align:left;font-family:"Geist Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;padding:9px 14px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap}
+  thead th .ar{color:var(--ink-mute);font-size:9px}
+  tbody td{padding:9px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  tbody tr:hover{background:var(--bg)}
+  tbody tr.hit{background:color-mix(in srgb,var(--accent-soft) 55%,transparent)}
+  td.num{font-family:"Geist Mono",monospace;white-space:nowrap}
+  td.money{font-family:"Fraunces",serif;font-size:15px;font-weight:600;white-space:nowrap}
+  .idcc-cell{font-family:"Geist Mono",monospace;font-size:11px;color:var(--ink-mute);line-height:1.5}
+
+  .note{font-size:12.5px;color:var(--ink-mute);line-height:1.5}
+  footer.foot{border-top:1px solid var(--line);margin-top:20px;padding:22px 0 50px;font-size:12.5px;color:var(--ink-mute);line-height:1.6}
+  .loading{padding:90px 0;text-align:center;color:var(--ink-mute);font-family:"Geist Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+  .kbd{font-family:"Geist Mono",monospace;font-size:11px;background:var(--bg-deep);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px}
+</style>
