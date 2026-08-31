@@ -1,5 +1,29 @@
 
   /* ---------- export CSV ---------- */
+  var toastT;
+  function toast(msg) {
+    var t = el("toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "toast"; t.className = "toast";
+      document.body.appendChild(t);
+    }
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { t.hidden = true; }, 4200);
+  }
+
+  /* Le visualiseur d'artefact n'autorise pas les liens de téléchargement :
+     on passe par la capacité "downloads" quand elle est disponible, et on
+     retombe sur le lien blob partout ailleurs (page servie ou fichier local). */
+  var capDl;
+  function downloadsCap() {
+    if (capDl !== undefined) return Promise.resolve(capDl);
+    if (!window.claude || typeof window.claude.use !== "function") { capDl = null; return Promise.resolve(null); }
+    return window.claude.use("downloads").then(function (d) { capDl = d || null; return capDl; },
+      function () { capDl = null; return null; });
+  }
+
   function dl(name, rows) {
     var csv = rows.map(function (r) {
       return r.map(function (v) {
@@ -7,11 +31,22 @@
         return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
       }).join(";");
     }).join("\r\n");
-    var blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = name;
-    document.body.appendChild(a); a.click();
-    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    var text = "﻿" + csv;
+    downloadsCap().then(function (caps) {
+      if (caps) {
+        return caps.save({ filename: name, data: text }).then(function () {
+          toast(name + " enregistré.");
+        }, function (e) {
+          if (e && e.code === "declined") return;
+          toast("Export impossible : " + ((e && e.message) || "erreur inconnue") + ".");
+        });
+      }
+      var blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    });
   }
 
   function csvCert(ci) {

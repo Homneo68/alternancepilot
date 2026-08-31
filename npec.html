@@ -159,6 +159,7 @@
   .note{font-size:12.5px;color:var(--ink-mute);line-height:1.5}
   footer.foot{border-top:1px solid var(--line);margin-top:20px;padding:22px 0 50px;font-size:12.5px;color:var(--ink-mute);line-height:1.6}
   .loading{padding:90px 0;text-align:center;color:var(--ink-mute);font-family:"Geist Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-size:13.5px;z-index:200;box-shadow:0 10px 30px -10px rgba(22,20,15,.5);max-width:90vw;text-align:center}
   .kbd{font-family:"Geist Mono",monospace;font-size:11px;background:var(--bg-deep);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px}
 </style>
 
@@ -241,7 +242,7 @@
 </div>
 
 <script type="text/plain" id="npec-payload">
-H4sIADzqlWoC/8y9SW8j2XY/+FUCuXjKBKgsxhxRuxAZkqKS0+OgV2k/oxGiKIlliuTjIFf6jwa89bbdG+/+8KYrbcDohXfeWfAX8SfpM9wxghSVVc9Gw89Z
+H4sIALfqlWoC/8y9SW8j2XY/+FUCuXjKBKgsxhxRuxAZkqKS0+OgV2k/oxGiKIlliuTjIFf6jwa89bbdG+/+8KYrbcDohXfeWfAX8SfpM9wxghSVVc9Gw89Z
 EsWIe+69557hd4b7v949zXblu+//17vdfLeZvfv+3fDl6/3L181suZvPFs5+Of/TfubczbZOb5C3nP/6u//bKdfrxXxa3i5mTrl33NnG2c7Wu9nT7WbmeE0v
 etd4t13tN1N82+WmXE5nznT1tH75upvBz1t6x+ujvL97+TrdzHbO8j/+X3rleeJ7zt3e8VKnXL38+44+/AAD3ZW7WSbomS/mOxyTHmim500XvrBszTa7d9/7
 UeziL+slfMNr+vBzcTedws9xgJ+v9uvFbPvu+zgIPdf/PxvvpvTNv/xLr/GuBTQRbdvVdA6zePm6de7nS5jY/OWXDTzV+MsgTv7qr+A//OXLQfXrd//1d/9Y
@@ -3745,6 +3746,30 @@ pcsElv31738BC/rv9F0WAA==
   }
 
   /* ---------- export CSV ---------- */
+  var toastT;
+  function toast(msg) {
+    var t = el("toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "toast"; t.className = "toast";
+      document.body.appendChild(t);
+    }
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { t.hidden = true; }, 4200);
+  }
+
+  /* Le visualiseur d'artefact n'autorise pas les liens de téléchargement :
+     on passe par la capacité "downloads" quand elle est disponible, et on
+     retombe sur le lien blob partout ailleurs (page servie ou fichier local). */
+  var capDl;
+  function downloadsCap() {
+    if (capDl !== undefined) return Promise.resolve(capDl);
+    if (!window.claude || typeof window.claude.use !== "function") { capDl = null; return Promise.resolve(null); }
+    return window.claude.use("downloads").then(function (d) { capDl = d || null; return capDl; },
+      function () { capDl = null; return null; });
+  }
+
   function dl(name, rows) {
     var csv = rows.map(function (r) {
       return r.map(function (v) {
@@ -3752,11 +3777,22 @@ pcsElv31738BC/rv9F0WAA==
         return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
       }).join(";");
     }).join("\r\n");
-    var blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = name;
-    document.body.appendChild(a); a.click();
-    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    var text = "﻿" + csv;
+    downloadsCap().then(function (caps) {
+      if (caps) {
+        return caps.save({ filename: name, data: text }).then(function () {
+          toast(name + " enregistré.");
+        }, function (e) {
+          if (e && e.code === "declined") return;
+          toast("Export impossible : " + ((e && e.message) || "erreur inconnue") + ".");
+        });
+      }
+      var blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    });
   }
 
   function csvCert(ci) {
