@@ -37,7 +37,7 @@ for rncp in order:
 
 payload={
  'meta':{'titre':"Référentiel unique des NPEC — applicable au 1er septembre 2026",
-         'source':"France compétences — Référentiel unique des NPEC (décret n° 2026-832 du 29 août 2026)",
+         'source':"France compétences — Référentiel unique des NPEC (décret n° 2026-832 du 29 août 2026), mise à jour du 16 octobre 2026",
          'dateApplicabilite':"2026-09-01",
          'nCert':len(out_certs),'nCpne':len(cpne),
          'nIdcc':len({i for c in cpne for i in c[2]}),

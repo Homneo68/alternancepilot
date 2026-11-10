@@ -127,12 +127,29 @@
         '<div><div class="amount-lab">Maximum</div><div class="v">' + money(s.max) + "</div></div>" +
         "</div>";
     }
+    /* Opportunités / vigilance par rapport à la référence :
+       le NPEC de la branche sélectionnée, sinon la médiane. */
+    var s2 = stats(c.i);
+    var refv = col !== null ? npec(c.i, col) : s2.med;
+    if (refv === null || refv === undefined) refv = s2.med;
+    var bA = 0, bB = 0;
+    groups(c.i).forEach(function (x) {
+      if (x.v > refv) bA += x.cols.length;
+      else if (x.v < refv) bB += x.cols.length;
+    });
+    var mini = '<div class="mini">' +
+      (bA ? '<span class="opp">▲ Opportunités · ' + bA + " branche" + (bA > 1 ? "s" : "") + " jusqu'à " + money(s2.max) + "</span>"
+          : '<span class="opp">✔ Au maximum des branches</span>') +
+      (bB ? '<span class="vig">▼ Vigilance · ' + bB + " branche" + (bB > 1 ? "s" : "") + " dès " + money(s2.min) + "</span>"
+          : '<span class="vig">✔ Au minimum des branches</span>') +
+      "</div>";
+    if (!bA && !bB) mini = '<div class="mini"><span class="opp">Montant identique dans toutes les branches</span></div>';
     return '<button class="card" data-i="' + c.i + '" type="button">' +
       '<div class="card-head"><div class="name">' + highlight(c.lib, state.qf) + "</div>" +
       '<span class="badge">' + esc(c.type) + "</span></div>" +
       '<div class="rncp">' + highlight(c.codes.join(" · "), state.qf) + "</div>" +
       '<div class="certif">' + esc(c.cert || "Certificateur non précisé") + "</div>" +
-      '<div class="amount-row">' + body + "</div></button>";
+      '<div class="amount-row">' + body + "</div>" + mini + "</button>";
   }
 
   function render() {

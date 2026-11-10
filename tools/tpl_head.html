@@ -114,6 +114,10 @@
   .amount-lab{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--steel);margin-bottom:5px;font-weight:500}
   .range{display:flex;gap:18px;flex-wrap:wrap}
   .range .v{font-family:"Montserrat",sans-serif;font-size:17px;font-weight:700;line-height:1.1;color:var(--navy);font-variant-numeric:tabular-nums}
+  .mini{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .mini span{font-size:11px;font-weight:600;border-radius:6px;padding:3px 9px;line-height:1.5}
+  .mini .opp{background:var(--good-soft);color:var(--good)}
+  .mini .vig{background:var(--warn-soft);color:var(--warn)}
   .more{display:block;margin:0 auto 60px;padding:12px 26px}
 
   .empty-state{padding:60px 0 90px;text-align:center;color:var(--ink-mute)}
@@ -151,14 +155,15 @@
   .tier{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
   .tier-head{padding:12px 16px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:9px}
   .tier-head .dot{width:9px;height:9px;border-radius:50%}
-  .tier.high .dot{background:var(--cyan)} .tier.low .dot{background:var(--steel)}
+  .tier.high .dot{background:var(--cyan)} .tier.low .dot{background:#ff6300}
   .tier-head .t{font-family:"Montserrat",sans-serif;font-size:14.5px;font-weight:700;color:var(--navy)}
   .tier-head .n{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em}
+  .tier .rows{max-height:430px;overflow:auto}
   .trow{display:flex;gap:14px;padding:11px 16px;border-top:1px solid var(--line-soft);align-items:flex-start}
   .trow:first-of-type{border-top:none}
   .trow .rank{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-mute);width:16px;padding-top:4px;flex:none}
   .trow .amt{font-family:"Montserrat",sans-serif;font-size:17px;font-weight:800;width:96px;flex:none;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-  .tier.high .amt{color:var(--accent-ink)} .tier.low .amt{color:var(--steel)}
+  .tier.high .amt{color:var(--accent-ink)} .tier.low .amt{color:var(--warn)}
   .trow .who{flex:1;min-width:0}
   .trow .cpne-n{font-size:13px;line-height:1.4;color:var(--ink)}
   .trow .idccs{margin-top:5px;display:flex;gap:4px;flex-wrap:wrap}

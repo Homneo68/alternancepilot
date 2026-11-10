@@ -12,7 +12,7 @@
     }).join("") + (ids.length > shown.length ? '<span class="idcc-chip">+' + (ids.length - shown.length) + "</span>" : "") + "</div>";
   }
 
-  function tierHTML(ci, g, kind) {
+  function tierHTML(ci, g, kind, title, emptyMsg) {
     var hiIdcc = state.branch ? state.branch.idcc : null;
     var rows = g.map(function (grp, k) {
       var names = grp.cols.map(function (c) { return BRANCHES[c].name; });
@@ -23,10 +23,12 @@
         '<div class="who"><div class="cpne-n">' + first + "</div>" +
         idccChips(grp.cols, hiIdcc) + extra + "</div></div>";
     }).join("");
+    if (!rows) rows = '<div class="trow"><div class="who"><div class="plus">' + emptyMsg + "</div></div></div>";
     var nb = g.reduce(function (a, x) { return a + x.cols.length; }, 0);
     return '<div class="tier ' + kind + '"><div class="tier-head"><span class="dot"></span>' +
-      '<span class="t">' + (kind === "high" ? "5 montants les plus élevés" : "5 montants les plus bas") + "</span>" +
-      '<span class="n">' + nb + " branches concernées</span></div>" + rows + "</div>";
+      '<span class="t">' + title + "</span>" +
+      '<span class="n">' + (g.length ? g.length + " montant" + (g.length > 1 ? "s" : "") + " · " + nb + " branche" + (nb > 1 ? "s" : "") : "—") + "</span></div>" +
+      '<div class="rows">' + rows + "</div></div>";
   }
 
   function tableHTML(ci) {
@@ -78,9 +80,17 @@
 
   function detailHTML(ci) {
     var c = CERTS[ci], s = stats(ci), g = groups(ci);
-    var high = g.slice(0, 5);
-    var low = g.slice(Math.max(0, g.length - 5)).slice().reverse();
-    if (g.length <= 5) low = g.slice().reverse();
+    /* Référence : le NPEC de la branche sélectionnée, sinon la médiane. */
+    var refV = null, refLab = null;
+    if (state.branch) {
+      refV = npec(ci, state.branch.col);
+      refLab = state.branch.name;
+    }
+    if (refV === null || refV === undefined) { refV = s.med; refLab = null; }
+    var above = g.filter(function (x) { return x.v > refV; });
+    var below = g.filter(function (x) { return x.v < refV; }).slice().reverse();
+    var eqN = g.filter(function (x) { return x.v === refV; })
+      .reduce(function (a, x) { return a + x.cols.length; }, 0);
 
     var hero = "";
     if (state.branch) {
@@ -106,8 +116,14 @@
       '<div class="stat"><div class="k">Écart max/min</div><div class="v">' + (s.min ? "×" + (s.max / s.min).toFixed(2).replace(".", ",") : "—") + "</div></div>" +
       '<div class="stat"><div class="k">Montants distincts</div><div class="v">' + s.distinct + "</div></div>" +
       "</div>" +
-      "<div>" + '<h3 class="sec">Information — dispersion du NPEC par branche<span class="tag">' + s.nb + " branches valorisées" + (s.miss ? " · " + s.miss + " non exploitable" : "") + "</span></h3>" +
-      '<div class="two">' + tierHTML(ci, high, "high") + tierHTML(ci, low, "low") + "</div></div>" +
+      "<div>" + '<h3 class="sec">Information — opportunités &amp; vigilance par branche<span class="tag">Référence : ' + money(refV) +
+      (refLab ? " · " + esc(refLab.slice(0, 55)) : " · médiane (aucune branche sélectionnée)") +
+      (eqN ? " · " + eqN + " branche" + (eqN > 1 ? "s" : "") + " à ce niveau" : "") +
+      (s.miss ? " · " + s.miss + " non exploitable" : "") + "</span></h3>" +
+      '<div class="two">' +
+      tierHTML(ci, above, "high", "Opportunités — NPEC supérieurs", "Aucune branche au-dessus de la référence : elle est au maximum pour cette certification.") +
+      tierHTML(ci, below, "low", "Vigilance — NPEC inférieurs", "Aucune branche en dessous de la référence : elle est au minimum pour cette certification.") +
+      "</div></div>" +
       "<div>" + '<h3 class="sec">Grille complète — toutes les branches</h3>' + tableHTML(ci) + "</div>" +
       '<p class="note">Date d\'applicabilité : ' + esc(fmtDate(D.meta.dateApplicabilite)) + '. Source : ' + esc(D.meta.source) + ".</p>";
   }

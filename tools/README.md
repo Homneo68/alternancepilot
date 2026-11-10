@@ -37,7 +37,7 @@ cellule à cellule contre `raw.json`.
 
 ## Anomalie source connue
 
-Dans le référentiel du 1er septembre 2026, la cellule « NPEC final » du couple
+Dans le référentiel du 1er septembre 2026 (y compris la mise à jour du 16 octobre 2026), la cellule « NPEC final » du couple
 `RNCP41381` × CPNE 224 (COPANIEF - Fabricant de sucres) contient un libellé de
 CPNE au lieu d'un montant. La valeur est traitée comme indisponible (`n.d.`) et
 signalée à l'utilisateur dans la fiche.

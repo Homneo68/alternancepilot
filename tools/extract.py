@@ -64,20 +64,23 @@ dates=set()
 n=0
 for i,r in enumerate(rows('xl/worksheets/sheet3.xml')):
     if i<3: continue
+    # maj 16.10.2026 : col 0 = chainage complet, 1-4 = RNCP eclates,
+    # 5 = libelle, 6 = certificateur, 7 = type, 8 = code CPNE, 9 = CPNE,
+    # 10 = NPEC final, 11 = statut, 12 = date
     rncp=r.get(0)
     if rncp is None: continue
     n+=1
     if rncp not in certs:
-        certs[rncp]={'rncp':rncp,'lib':r.get(1),'cert':r.get(2),'type':r.get(3)}
+        certs[rncp]={'rncp':rncp,'lib':r.get(5),'cert':r.get(6),'type':r.get(7)}
         order.append(rncp); values[rncp]={}; statuses[rncp]={}
-    cp=r.get(4)
+    cp=r.get(8)
     if cp is None: continue
     cp=int(cp)
-    if cp not in cpne_names: cpne_names[cp]=r.get(5)
-    npec=r.get(6)
+    if cp not in cpne_names: cpne_names[cp]=r.get(9)
+    npec=r.get(10)
     values[rncp][cp]=npec
-    statuses[rncp][cp]=r.get(7)
-    d=r.get(8)
+    statuses[rncp][cp]=r.get(11)
+    d=r.get(12)
     if isinstance(d,(int,float)): dates.add(d)
     if n%100000==0: print(n, time.time()-t0, file=sys.stderr)
 print('rows',n,'certs',len(certs),'elapsed',time.time()-t0, file=sys.stderr)
